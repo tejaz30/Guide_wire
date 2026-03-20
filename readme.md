@@ -8,6 +8,20 @@
 
 ---
 
+## TL;DR
+
+| | |
+|---|---|
+| **Persona** | Zomato / Swiggy food delivery partners |
+| **Core idea** | Weekly parametric income insurance — automatic payouts when external disruptions halt deliveries |
+| **Key innovation 1** | ML-driven dynamic premium with zone-level risk (LightGBM + Tweedie) |
+| **Key innovation 2** | Hybrid trigger system — rule-based threshold engine + LSTM pattern detector |
+| **Key innovation 3** | 3-layer anti-fraud: multi-signal corroboration + Isolation Forest + DBSCAN ring detector |
+| **Key innovation 4** | Basis risk elimination — payout proportional to actual hours lost, not a flat amount |
+| **USP** | Zero-claim, zero-friction, instant payout (< 2 hrs). Worker never files anything. |
+
+---
+
 ## The Problem
 
 Food delivery partners on Zomato and Swiggy lose **20–30% of their monthly income** when external disruptions — heavy rain, floods, severe pollution, sudden curfews — halt deliveries. They have no safety net. When a red-alert day hits, a delivery partner loses an entire day's wages with zero recourse.
@@ -15,6 +29,22 @@ Food delivery partners on Zomato and Swiggy lose **20–30% of their monthly inc
 **KamaiKavach** provides automated, zero-paperwork income protection triggered by real-world disruption events, structured on a weekly premium cycle that matches how gig workers earn and spend.
 
 > ⚠️ Strictly excluded: health, life, accident, and vehicle repair coverage. Income loss only.
+
+---
+
+## Key Differentiators
+
+**1. Basis risk elimination**  
+Standard parametric insurance pays a fixed amount when a threshold is crossed — regardless of actual impact. Our ML payout layer predicts actual hours lost per worker, per zone, per event. A worker in a flooded zone gets a different payout than one in a zone with light drizzle from the same trigger. No other team is solving this.
+
+**2. Multi-signal anti-spoofing**  
+GPS alone is obsolete. Our 3-layer fraud system (device signal corroboration + Isolation Forest anomaly detection + DBSCAN ring detector) makes GPS spoofing self-defeating — a fraudster would need to simultaneously fake cell tower location, WiFi network, accelerometer history, and platform activity to defeat it.
+
+**3. Weekly-first design**  
+Every financial and UX decision — premium cycle, payout caps, deductible structure, appeal flow — is designed around how gig workers actually earn and spend. Most insurance products are monthly products bolted onto a weekly persona. Ours is built weekly from the ground up.
+
+**4. Zero-claim UX**  
+The worker never initiates a claim, never fills a form, never uploads a photo. The platform detects, validates, and pays automatically. The only thing the worker sees is a push notification with a transfer confirmation.
 
 ---
 
@@ -256,6 +286,23 @@ No worker action required at any step. Target: money in account within 2 hours o
 | Phase 1 | Mar 4–20 | Architecture design, ML spec, README, wireframes, repo setup |
 | Phase 2 | Mar 21–Apr 4 | Worker registration, policy creation, premium engine (Model 1), trigger pipeline (Model 3), claims flow, payout processing |
 | Phase 3 | Apr 5–17 | Fraud detection (Model 4), payout calculator ML layer (Model 2), analytics dashboard, mock payout system, pitch deck, demo video |
+
+> **MVP implementation note:** The architecture describes the full target system. Phase 2 will ship simplified versions where appropriate — LightGBM premium model only (SHAP explainability deferred), rule-based trigger engine only (LSTM added in Phase 3), and signal corroboration + Isolation Forest for fraud (DBSCAN ring detector added in Phase 3). This sequencing de-risks delivery while keeping the architecture extensible.
+
+---
+
+## Business Viability
+
+| Assumption | Value | Rationale |
+|---|---|---|
+| Target loss ratio | 60–70% | Industry standard for parametric micro-insurance; sustainable at scale |
+| Premium pool design | Covers 1-in-3 disruption weeks | Bengaluru/Chennai average ~15–18 disruption days/year across food delivery zones |
+| Weekly premium range | ₹39–₹79 | <1% of weekly earnings for a ₹700/day worker — affordable without adverse selection |
+| Fraud leakage reduction | Est. 60–75% vs GPS-only systems | 3-layer detection vs single-signal baseline |
+| Max payout cap (70% replacement) | Preserves work incentive | Worker earning ₹800/day receives max ₹560/day — working always pays more |
+| Deductible (1 hour) | Eliminates micro-claims | Prevents system abuse for short disruptions that don't materially impact income |
+
+The weekly cap of 3 disruption days and the 70% replacement ratio are structural controls against adverse selection and moral hazard respectively — not arbitrary limits. A worker cannot collect more from KamaiKavach in a week than they would earn by working through mild conditions.
 
 ---
 
