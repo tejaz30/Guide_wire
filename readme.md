@@ -73,7 +73,7 @@ A Zomato or Swiggy delivery partner in an Indian metro (Chennai, Mumbai, Pune, B
 Arjun is a Zomato delivery partner in Mumbai. On a Tuesday evening during peak dinner hours, rainfall in his zone crosses 64.5mm — the IMD threshold for heavy rain. Orders dry up and the roads become unsafe. Arjun has no choice but to stop working.
 
 He does not open KamaiKavach. He does not need to. The moment the rainfall threshold is breached in his registered zone, KamaiKavach detects it automatically and cross-checks it against his active shift window. A claim is initiated without any input from him. The AI engine validates his zone and shift eligibility, the fraud detection layer confirms everything looks clean, and the payout for his lost hours is calculated based on his average weekly earnings. The money is transferred to his UPI-linked bank account. Arjun gets a notification: *"₹280 has been added to your account for today's disruption."*
-
+<img width="782" height="552" alt="Screenshot 2026-03-20 234916" src="https://github.com/user-attachments/assets/c3842d58-b785-4888-88f2-fb8f415998e1" /> 
 ---
 
 ### Use Case 2 — Bandh Declaration, Pune (Raj)
@@ -81,35 +81,7 @@ He does not open KamaiKavach. He does not need to. The moment the rainfall thres
 Raj is a Swiggy delivery partner in Pune. The night before his morning shift, a local bandh is declared across his operating zone. Roads are blocked, his pickup hub is inaccessible, and there will be no deliveries moving in his area.
 
 KamaiKavach picks up the bandh declaration overnight through its civic disruption monitoring service and cross-checks it against Raj's registered zone and upcoming shift window. A claim is initiated automatically, validated, and processed before Raj's shift even begins. By the time Raj wakes up, he already has a notification telling him his shift income has been covered and the payout is in his account. He never had to do a thing.
-
----
-
-### PlantUML: Automated Claim Flow
-
-```plantuml
-@startuml
-actor Worker
-participant "KamaiKavach\nBackground Service" as App
-participant "IMD / Civic\nAlert API" as API
-participant "Trigger\nModel (M3)" as M3
-participant "Fraud\nDetection (M5)" as M5
-participant "Payout\nModel (M2)" as M2
-participant "UPI Gateway" as UPI
-
-API -> App : Rainfall 64.5mm detected in Zone 7
-App -> M3 : Evaluate trigger: Zone 7, 8:47pm
-M3 -> App : TRIGGER FIRED (rainfall threshold breached)
-App -> App : Identify active policyholders in Zone 7
-App -> M5 : Corroborate: Arjun's GPS, cell tower,\nWiFi, accelerometer, platform activity
-M5 -> App : Corroboration score 0.91 → CLEAN
-App -> M2 : Calculate hours lost:\nintensity=64.5mm, time=8:47pm,\nzone_flood_score=0.8
-M2 -> App : Predicted hours lost: 3.2hrs
-App -> App : Payout = min(3.2 × hourly_rate − deductible, coverage_cap)\n= ₹225
-App -> UPI : Initiate transfer ₹225 → Arjun's UPI
-UPI -> Worker : ₹225 credited
-App -> Worker : Push notification:\n"₹225 added for tonight's disruption"
-@enduml
-```
+<img width="784" height="625" alt="Screenshot 2026-03-20 235226" src="https://github.com/user-attachments/assets/ecd31e84-9b01-47b8-bd77-772e171221fe" />
 
 ---
 
